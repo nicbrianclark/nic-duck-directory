@@ -1,6 +1,7 @@
 :root {
     --clr-black: #333333;
     --clr-darkgrey: #4e4e4e;
+    --clr-darkgreyaccent: #232323;
     --clr-white: #ececec;
 }
 body {
@@ -9,6 +10,7 @@ body {
     font-family: Helvetica, Arial, sans-serif;
     font-weight: lighter;
     margin: 0;
+    line-height: 1.5;
 }
 
 ul {
@@ -36,9 +38,36 @@ ul {
     max-width: 768px;
 }
 
+.grid {
+    display: grid;
+    grid-template: auto / repeat(6,1fr);
+    gap: 2rem;
+}
+.grid-item {
+    grid-column: span 2;
+}
+.card {
+    background-color: var(--clr-black);
+    border-radius: 5px;
+    transition: background-color .4s;
+    overflow: hidden;
+}
+.card:hover {
+    background-color: var(--clr-darkgreyaccent);
+}
+.card .image img {
+    display: block;
+    width: 100%;
+}
+
+.card .content {
+    padding: 2rem;
+}
+
 header {
     background-color: var(--clr-black);
     padding: 1rem 0;
+    border-bottom: 3px solid var(--clr-darkgreyaccent);
 }
 header img {
     display: block;
@@ -59,4 +88,11 @@ header nav ul {
 }
 .welcome {
     padding: 4rem 0;
+}
+
+footer {
+    background-color: var(--clr-black);
+    padding: 2rem 0;
+    margin-top: 4rem;
+    border-top: 3px solid var(--clr-darkgreyaccent);
 }
