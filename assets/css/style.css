@@ -44,8 +44,8 @@ a {
 
 .grid {
     display: grid;
-    grid-template: auto / repeat(6,1fr);
-    gap: 2rem;
+    grid-template: auto / 100%;
+    row-gap: 2rem;
 }
 .grid-item {
     grid-column: span 2;
@@ -139,4 +139,17 @@ label {
 
 .error {
     color: red;
+}
+
+@media screen and (min-width: 768px) {
+    .grid {
+        grid-template: auto / repeat(4,1fr);
+        gap: 2rem;
+    }
+}
+
+@media screen and (min-width: 1080px) {
+    .grid {
+        grid-template: auto / repeat(6,1fr);
+    }
 }

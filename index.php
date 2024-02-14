@@ -39,7 +39,7 @@
                             <div class="card">
                                 
                             <div class="image">
-                                <img src="<?php echo $duck["img_src"]; ?>" width="300" height="300" alt="a duck">
+                                <img src="<?php if($duck["img_src"]) { echo "./assets/images/" . $duck["img_src"]; } else { echo "https://organicfeeds.com/wp-content/uploads/2021/03/How-To-Raise-A-Baby-Duck-scaled-1.jpg"; } ?>" width="300" alt="a duck">
                             </div>
                                 
                             <div class="content">
