@@ -4,7 +4,7 @@
     include('./config/db.php');
 
     // create SQL Query
-    $sql = "SELECT name,favorite_foods,img_src FROM ducks";
+    $sql = "SELECT id,name,favorite_foods,img_src FROM ducks";
 
     // query the DB and add the result to a php array
     $result = mysqli_query($conn, $sql);
@@ -57,6 +57,7 @@
                                         <?php endforeach ?>
 
                                     </ul>
+                                    <a href="./profile.php?id=<?php echo $duck["id"]; ?>">View Duck</a>
                                 </div>
                             </div>
                         </div>
