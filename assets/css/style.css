@@ -140,7 +140,32 @@ label {
 .error {
     color: red;
 }
+.profile {
+    padding: 4rem 0;
+}
+.profile img {
+    display: block;
+    width: 100%;
+}
+.profile-grid {
+    display: grid;
+    gap: 2rem;
+}
 
+.profile-grid .controls {
+    display: flex;
+    gap: 1rem;
+}
+input[type="submit"] {
+    border: 1px solid;
+    background-color: transparent;
+    color: white;
+    padding: .5rem 2rem;
+    cursor: pointer;
+}
+.delete input[type="submit"] {
+    border-color: red;
+}
 @media screen and (min-width: 768px) {
     .grid {
         grid-template: auto / repeat(4,1fr);
@@ -151,5 +176,13 @@ label {
 @media screen and (min-width: 1080px) {
     .grid {
         grid-template: auto / repeat(6,1fr);
+    }
+
+    .profile-grid {
+        grid-template: auto / 1fr 1fr;
+        align-items: center;
+    }
+    .profile-grid .intro {
+        grid-column: span 2;
     }
 }
