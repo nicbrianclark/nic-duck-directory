@@ -53,7 +53,7 @@ if (isset($_POST['delete'])) {
                     <h1>Profile</h1>
                 </div>
                 <div class="image">
-                    <img src="<?php echo "./assets/images/" . $duck["img_src"]; ?>" alt="">
+                    <img src="<?php echo $duck["img_src"]; ?>" alt="">
                 </div>
                 <div class="content">
                     <h2><?php echo $duck["name"]; ?></h2>
