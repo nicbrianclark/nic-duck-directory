@@ -1,57 +1,39 @@
 <?php
+   
+// check for GET
+if(isset($_GET['id'])) {
+    echo $_GET['id'];
+};
 
-if (!empty($_POST)) {
-    require('./config/db.php');
+// check for POST
+if (isset($_POST['submit'])) {
+    require('./components/errorcheck.php');
 
-    if (isset($_POST['id_to_edit'])) {
-        $id = mysqli_real_escape_string($conn, $_POST['id_to_edit']);
-        $sql = "SELECT * FROM ducks WHERE id=$id";
-        // query the DB and add the result to a php array
-        $result = mysqli_query($conn, $sql);
-        $duck = mysqli_fetch_assoc($result);
-
-        // free result from memory and close SQL connection
-        mysqli_free_result($result);
-        mysqli_close($conn);
-
-    } elseif (isset($_POST['submit'])) {
-        require('./config/functions.php');
-
-        if(!array_filter(errorcheck($_POST['name'], $_POST['favorite_foods'], $_POST['bio'], $_FILES['img_src']))) {
-            // everything is good, form is valid
-            // connect to the database
-            require('./config/db.php');
-
-            $target_dir = "assets/images/";
-            $target_file = $target_dir . basename($_FILES["img_src"]["name"]);
-
-            $id = $_POST['duckid'];
-            $name = $_POST['name'];
-            $favorite_foods = $_POST['favorite_foods'];
-            $bio = $_POST['bio'];
-            $img_src = $target_file;
-
-            // build sql query
-            $sql = "UPDATE ducks SET name='$name', favorite_foods='$favorite_foods', bio='$bio', img_src='$img_src' WHERE id=$id";
+    if(!array_filter($errors)) {
+        // everything is good, form is valid
+        // connect to the database
+        require('./config/db.php');
     
-            // execute query in mysql
-            mysqli_query($conn,$sql);
+        // build sql query
+        // $sql = "INSERT INTO ducks (column1, column2, column3 ...) VALUES ('Value for Column1', 'Value for Column2', 'Value for Column3' ...)";
+        $sql = "UPDATE ducks SET name='$name', favorite_foods='$favorite_foods', bio='$bio', img_src='$target_file') WHERE id='$id'";
     
-            // Move image file to target directory
-            if (move_uploaded_file($_FILES["img_src"]["tmp_name"], $target_file)) {
-                // File uploaded Successfully
-            } else {
-                echo "Sorry, there was an error uploading your file.";
-            }
+        // execute query in mysql
+        mysqli_query($conn,$sql);
     
-            // load homepage
-            header("Location: ./index.php");
+        // Move image file to target directory
+        if (move_uploaded_file($_FILES["img_src"]["tmp_name"], $target_file)) {
+            // File uploaded Successfully
+        } else {
+            echo "Sorry, there was an error uploading your file.";
         }
-    }
     
-} else {
-    echo "No POST";
+        // load homepage
+        header("Location: ./index.php");
+    }
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -64,17 +46,14 @@ if (!empty($_POST)) {
     <?php include('./components/nav.php'); ?>
     
     <main>
-        <section class="edit-form">
+        <section class="create-form">
             <div class="container narrow">
-                <form action="./edit-duck.php" id="create-duck" method="POST" enctype="multipart/form-data">
-                    <?php
-                        if (isset($_POST['id_to_edit'])) {
-                            $id = $_POST['id_to_edit'];
-                            echo "<input type='hidden' name='duckid' value='$id' />"; 
-                        }
-                    ?>
+                <form action="./create-duck.php" id="create-duck" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="existing_id" value="<?php if($_GET['id']) { echo $_GET['id']; } ?>">
+                    
                     <div class="form-intro">
-                        <h1>Edit <?php echo $duck["name"]; ?></h1>
+                        <h1>Want a New Duck?</h1>
+                        <p>Fill out this helpful form to add a new duck (<a href="https://www.youtube.com/watch?v=3KvgQIBcdRk" target="_blank">One that won't quack all night.</a>).</p>
                     </div>
                     
                     <div class="input-group">
@@ -91,7 +70,7 @@ if (!empty($_POST)) {
                             id="name"
                             name="name"
                             placeholder="Daffy"
-                            value="<?php if(isset($duck["name"])) { echo $duck["name"]; } ?>"
+                            value="<?php if(isset($name)) { echo $name; } ?>"
                             
                         />
 
@@ -106,12 +85,11 @@ if (!empty($_POST)) {
                             }
                         ?>
 
-                        <input type="text" id="foods" name="favorite_foods" placeholder="eggs, tofu, grubs" value="<?php if(isset($duck["favorite_foods"])) { echo $duck["favorite_foods"]; } ?>" />
+                        <input type="text" id="foods" name="favorite_foods" placeholder="eggs, tofu, grubs" value="<?php if(isset($favorite_foods)) { echo $favorite_foods; } ?>" />
                     </div>
 
                     <div class="input-group">
                         <label for="image">Duck's Picture</label>
-                        <img src="<?php echo $duck['img_src']; ?>" width="100">
 
                         <?php
                             if (isset($errors['img_src'])) {
@@ -119,7 +97,7 @@ if (!empty($_POST)) {
                             }
                         ?>
 
-                        <input type="file" id="image" name="img_src" />
+                        <input type="file" id="image" name="img_src">
                     </div>
                     
                     <div class="input-group">
@@ -131,11 +109,11 @@ if (!empty($_POST)) {
                             }
                         ?>
 
-                        <textarea name="bio" id="bio" rows="10" placeholder="Talk about your duck..." ><?php if(isset($duck["bio"])) { echo $duck["bio"]; } ?></textarea>
+                        <textarea name="bio" id="bio" rows="10" placeholder="Talk about your duck..." ><?php if(isset($bio)) { echo $bio; } ?></textarea>
                     </div>
 
                     <div class="input-group">
-                        <input type="submit" id="submit" name="submit" value="Edit Duck">
+                        <input type="submit" id="submit" name="submit" value="Update Duck">
                     </div>
 
                 </form>
