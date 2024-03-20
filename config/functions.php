@@ -1,5 +1,5 @@
 <?php
-function errorCheck($name, $favorite_foods, $bio, $img_src) {
+function errorCheck($edit, $name, $favorite_foods, $bio, $img_src) {
     // create error array
     $errors = array(
         "name" => "",
@@ -52,9 +52,9 @@ function errorCheck($name, $favorite_foods, $bio, $img_src) {
     $target_file = $target_dir . basename($_FILES["img_src"]["name"]);
     $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
 
-    if (empty($_FILES["img_src"]["tmp_name"])) {
+    if (!$edit && empty($_FILES["img_src"]["tmp_name"])) {
         $errors["img_src"] = "No file was uploaded.";
-    } else {
+    } else if (!$edit) {
         $check = @getimagesize($_FILES["img_src"]["tmp_name"]);
         if (!$check) {
             $errors["img_src"] = "File is not an image.";

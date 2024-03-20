@@ -1,7 +1,38 @@
 <?php
    
 // check for POST
-require('./components/errorcheck.php');
+if (isset($_POST['submit'])) {
+    require('./config/functions.php');
+    require('./config/db.php');
+
+    // Create image file path
+    $file_path = "assets/images/" . basename($_FILES["img_src"]["name"]);
+    
+    // define new Duck properties
+    $name = htmlspecialchars($_POST['name']);
+    $favorite_foods = htmlspecialchars($_POST['favorite_foods']);
+    $bio = htmlspecialchars($_POST['bio']);
+    $img_src = $file_path;
+
+    $errors = errorCheck(false, $name, $favorite_foods, $bio, $img_src);
+
+    if(!array_filter($errors)) {
+        $sql = "INSERT INTO ducks (name, favorite_foods, bio, img_src) VALUES ('$name', '$favorite_foods', '$bio', '$file_path')";
+        if (mysqli_query($conn, $sql)) {
+                
+            // Move image file to target directory
+            if (move_uploaded_file($_FILES["img_src"]["tmp_name"], $file_path)) {
+                // File uploaded Successfully, redirect to home page
+                header("Location: ./index.php");
+            } else {
+                echo "Sorry, there was an error uploading your file.";
+            }
+        };
+    } else {
+        print_r($errors);
+    }
+}
+
     
 ?>
 

@@ -1,35 +1,53 @@
 <?php
-   
+
 // check for GET
 if(isset($_GET['id'])) {
-    echo $_GET['id'];
+    $current_id = htmlspecialchars($_GET['id']);
+
+    require('./config/db.php');
+
+    $read_sql = "SELECT * FROM ducks WHERE id=$current_id";
+    $read_result = mysqli_query($conn, $read_sql);
+
+    $duck = mysqli_fetch_assoc($read_result);
+
+    // define existing Duck properties
+    $name = $duck['name'];
+    $favorite_foods = $duck['favorite_foods'];
+    $bio = $duck['bio'];
+    $img_src = $duck['img_src'];
 };
 
 // check for POST
 if (isset($_POST['submit'])) {
-    require('./components/errorcheck.php');
+    require('./config/functions.php');
+    require('./config/db.php');
+
+    // Create image file path
+    echo $file_path = "assets/images/" . basename($_FILES["img_src"]["name"]);
+    
+    
+    // define existing Duck properties
+    $name = htmlspecialchars($_POST['name']);
+    $favorite_foods = htmlspecialchars($_POST['favorite_foods']);
+    $bio = htmlspecialchars($_POST['bio']);
+    $img_src = $file_path;
+
+    $errors = errorCheck(true, $name, $favorite_foods, $bio, $img_src);
 
     if(!array_filter($errors)) {
-        // everything is good, form is valid
-        // connect to the database
-        require('./config/db.php');
-    
-        // build sql query
-        // $sql = "INSERT INTO ducks (column1, column2, column3 ...) VALUES ('Value for Column1', 'Value for Column2', 'Value for Column3' ...)";
-        $sql = "UPDATE ducks SET name='$name', favorite_foods='$favorite_foods', bio='$bio', img_src='$target_file') WHERE id='$id'";
-    
-        // execute query in mysql
-        mysqli_query($conn,$sql);
-    
-        // Move image file to target directory
-        if (move_uploaded_file($_FILES["img_src"]["tmp_name"], $target_file)) {
-            // File uploaded Successfully
-        } else {
-            echo "Sorry, there was an error uploading your file.";
-        }
-    
-        // load homepage
-        header("Location: ./index.php");
+        $sql = "UPDATE ducks SET name='$name', favorite_foods='$favorite_foods', bio='$bio', img_src='$file_path' WHERE id='$current_id'";
+        if (mysqli_query($conn, $sql)) {
+                
+            // TODO: fix empty update image from deleting duck image
+            if (empty($img_src) || move_uploaded_file($_FILES["img_src"]["tmp_name"], $file_path)) {
+                header("Location: ./index.php");
+            } else {
+                echo "Sorry, there was an error uploading your file.";
+            }
+        };
+    } else {
+        print_r($errors);
     }
 }
 
@@ -48,11 +66,11 @@ if (isset($_POST['submit'])) {
     <main>
         <section class="create-form">
             <div class="container narrow">
-                <form action="./create-duck.php" id="create-duck" method="POST" enctype="multipart/form-data">
-                    <input type="hidden" name="existing_id" value="<?php if($_GET['id']) { echo $_GET['id']; } ?>">
+                <form action="./edit-duck.php?id=<?php echo $current_id; ?>" id="edit-duck" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="existing_id" value="<?php if($current_id) { echo $current_id; } ?>">
                     
                     <div class="form-intro">
-                        <h1>Want a New Duck?</h1>
+                        <h1>Need to Fix Your Duck?</h1>
                         <p>Fill out this helpful form to add a new duck (<a href="https://www.youtube.com/watch?v=3KvgQIBcdRk" target="_blank">One that won't quack all night.</a>).</p>
                     </div>
                     
@@ -90,14 +108,13 @@ if (isset($_POST['submit'])) {
 
                     <div class="input-group">
                         <label for="image">Duck's Picture</label>
-
                         <?php
                             if (isset($errors['img_src'])) {
                                 echo "<div class='error'>" . $errors["img_src"] . "</div>";
                             }
                         ?>
 
-                        <input type="file" id="image" name="img_src">
+                        <input type="file" id="image" name="img_src"><img src="<?php echo $img_src; ?>" alt=""></input>
                     </div>
                     
                     <div class="input-group">

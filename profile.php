@@ -61,10 +61,8 @@ if (isset($_POST['delete'])) {
                     <p><strong>Favorite Foods:</strong> <?php echo $duck['favorite_foods']; ?></p>
                     <div class="controls">
                         <div class="edit">
-                        <form action="./edit-duck.php" method="POST">
-                            <input type="hidden" name="id_to_edit" value="<?php echo $duck['id']; ?>">
-                            <input type="submit" name="edit" value="Edit Duck">
-                        </form>
+                            <a href="./edit-duck.php?id=<?php echo $duck['id']; ?>">Edit Duck</a>
+                        </div>
                     </div>
                     <div class="delete">
                         <form action="./profile.php" method="POST">
